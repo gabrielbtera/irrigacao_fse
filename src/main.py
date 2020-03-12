@@ -1,6 +1,5 @@
 import machine
 import time
-
 from machine import Pin
 
 ################# variaveis globais ########################
@@ -25,23 +24,22 @@ def retorna_valores_sensores():
     return (percentual(adc1), percentual (adc2))
 
 
-atuador_sole1.value(0)
-
+umidade = percentual(umidade)
 while True:
     valor_sensor = retorna_valores_sensores()
-    umidade = percentual(umidade)
+    
     
     if valor_sensor[0] >= umidade:
-        atuador_sole1.value(1)
+        atuador_sole1.value(0)
     else:
-      atuador_sole1.value(0)
+      atuador_sole1.value(1)
     if valor_sensor[1] >= umidade:
-        atuador_sole2.value(1)
-    else:
         atuador_sole2.value(0)
-    if atuador_sole1.value() == 1 and atuador_sole2.value() == 1:
-        atuador_central.value(1)
     else:
+        atuador_sole2.value(1)
+    if atuador_sole1.value() == 0 and atuador_sole2.value() == 0:
         atuador_central.value(0)
+    else:
+        atuador_central.value(1)
     time.sleep_ms(50)
   
