@@ -12,10 +12,10 @@ pino_sensor2 = Pin(35, Pin.IN)
 ############################################################
 
 def renderizador():
-    html = """<!DOCTYPE html>
+  html = """ <!DOCTYPE html>
 <html>
   <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle de Irrigação</title>
     <style>
       .quadrante {
@@ -34,7 +34,7 @@ def renderizador():
         text-decoration: none;
         display: inline-block;
         font-size: 16px;
-        transition: background-color 1s;
+        transition: background-color 1ms;
       }
       button:hover{
         background-color: darkgreen ;
@@ -44,19 +44,30 @@ def renderizador():
   <body>
     <div style="text-align: center;">
       <h1>IRRIGAÇÃO INTELIGENTE, RESPONSIVA E FORMIDÁVEL</h1>
-      <h2>VÁVULA CENTRAL:<strong id="state">ON/OFF</strong></h2>
-      <button class="button">TRAVA MANUAL</button>
+      <h2>VÁVULA CENTRAL:<strong id="state">OFF</strong></h2>
+      <button class="button" onclick="lock()">TRAVA MANUAL</button>
       <h2><strong>QUADRANTES</strong></h2>
       <h1 class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q1</strong></h1>
       <h1 class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q2</strong></h1>
     </div>
     <script>
-      
+      function lock(){
+        fetch('/?lock').then(function(response){
+          response.text().then(function(text){
+            state = document.getElementById('state');
+            if (state.innerHTML === 'ON'){
+              state.innerHTML = 'OFF';
+            } else {
+              state.innerHTML = 'ON';
+            }
+          });
+        });
+      };
     </script>
   </body>
 </html> """
 
-    return html
+  return html
 
 
 def percentual(leitura):
@@ -99,7 +110,7 @@ while True:
     else:
         atuador_sole2.value(1)
     
-    if atuador_sole1.value() == 0 and atuador_sole2.value() == 0:
+    if atuador_sole1.value() == 0 and atuador_sole2.value() == 0: # VALVULA CENTRAL
         atuador_central.value(0)
     
     else:

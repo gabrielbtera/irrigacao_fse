@@ -11,7 +11,9 @@ gc.collect()
 
 import network
 ap = metwork.WLAN(network.AP_IF)
-ap.config(essid='brain', password='thisisaprototype')
 
 if not ap.active():
   ap.active(True)
+
+ap.config(essid='brain', password='thisisaprototype')
+print(access_point.ifconfig())
