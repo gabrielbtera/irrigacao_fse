@@ -67,10 +67,11 @@ def renderizador():
       
       async function changeColor(){
         let response = await fetch('/?color');
-        color = document.getElementById('block01');
+        
         if (response.ok){
-          let newColor = await response.text();
-          color.style.background = newColor;
+          let newColor = await response.json();
+          document.getElementById("block01").style.background = newColor["a"];
+          document.getElementById("block02").style.background = newColor["b"];
         };
       };
 
@@ -95,7 +96,7 @@ def retorna_valores_sensores():
     return (percentual(adc1), percentual (adc2))
 
 
-def getrgb():
+""" def getrgb():
   red = 0
   green = 0
   blue = 0
@@ -104,7 +105,15 @@ def getrgb():
     red += 1
     rgb = red, green, blue
     string = 'rgb' + str(rgb)
-    yield string
+    yield string """
+
+
+def per_rgb(percent):
+  green = (255 * percent) // 100
+  red = 255 - green
+  blue = 0
+  rgb = 'rgb(%d, %d, %d)' % (red, green, blue)
+  return rgb
 
 
 s = socket()
@@ -112,45 +121,54 @@ s.bind(('', 80))
 s.listen(5)
 
 umidade = percentual(umidade)
-rgb = getrgb()
+# rgb = getrgb()
+central_valv = False
 
 while True:
-    valor_sensor = retorna_valores_sensores()
-    conn, addr = s.accept()
-    conn.send('HTTP/1.1 200 OK\n')
-    print('Got a connection from %s' % str(addr))
-    request = conn.recv(1024)
-    request = str(request)
-    print('Content = %s' % request)
-    change_color = request.find('/?color')
-    
-    if change_color != -1:
-      conn.send('Content-type: text/html\n')
-      aux = next(rgb)
-      conn.sendall(rgb)
+  valor_sensor = retorna_valores_sensores()
+  conn, addr = s.accept()
+  conn.send('HTTP/1.1 200 OK\n')
+  print('Got a connection from %s' % str(addr))
+  request = conn.recv(1024)
+  request = str(request)
+  print('Content = %s' % request)
+  change_color = request.find('/?color')
+  lock = request.find('/?lock')
+  
+  if change_color != -1:
+    conn.send('Content-type:application/json\r\n\r\n')
+    # aux = next(rgb)
+    quadrantes = '{"a":"' + per_rgb(valor_sensor[0]) + '","b":"' + per_rgb(valor_sensor[1]) + '"}' 
+    conn.sendall(quadrantes)
 
+  if lock != -1:
+    if not central_valv:
+      pass
+
+  if not central_valv:
+    
     if valor_sensor[0] >= umidade:
         atuador_sole1.value(0)
-    
+
     else:
       atuador_sole1.value(1)
-    
+
     if valor_sensor[1] >= umidade:
         atuador_sole2.value(0)
-    
+
     else:
         atuador_sole2.value(1)
-    
+
     if atuador_sole1.value() == 0 and atuador_sole2.value() == 0: # VALVULA CENTRAL
         atuador_central.value(0)
-    
+
     else:
         atuador_central.value(1)
-    
-    time.sleep_ms(50)
-    
-    response = renderizador()
-    conn.send('Content-Type: text/html\n')
-    conn.send('Connection: close\n\n')
-    conn.sendall(response)
-    conn.close()
+  
+  # time.sleep_ms(50)
+  
+  response = renderizador()
+  conn.send('Content-Type: text/html\n')
+  conn.send('Connection: close\n\n')
+  conn.sendall(response)
+  conn.close()
