@@ -47,10 +47,11 @@ def renderizador():
       <h2>VÁVULA CENTRAL:<strong id="state">OFF</strong></h2>
       <button class="button" onclick="lock()">TRAVA MANUAL</button>
       <h2><strong>QUADRANTES</strong></h2>
-      <h1 class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q1</strong></h1>
-      <h1 class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q2</strong></h1>
+      <h1 id="block01" class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q1</strong></h1>
+      <h1 id="block02" class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q2</strong></h1>
     </div>
     <script>
+      
       function lock(){
         fetch('/?lock').then(function(response){
           response.text().then(function(text){
@@ -63,6 +64,17 @@ def renderizador():
           });
         });
       };
+      
+      async function changeColor(){
+        let response = await fetch('/?color');
+        color = document.getElementById('block01');
+        if (response.ok){
+          let newColor = await response.text();
+          color.style.background-color = newColor;
+        };
+      };
+
+      setInterval(changeColor, 250);
     </script>
   </body>
 </html> """
@@ -83,11 +95,24 @@ def retorna_valores_sensores():
     return (percentual(adc1), percentual (adc2))
 
 
+def getrgb():
+  red = 0
+  green = 0
+  blue = 0
+ 
+  for i in range(256):
+    red += 1
+    rgb = red, green, blue
+    string = 'rgb' + str(rgb)
+    yield string
+
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('', 80))
 s.listen(5)
 
 umidade = percentual(umidade)
+rgb = getrgb()
 
 while True:
     valor_sensor = retorna_valores_sensores()
@@ -97,6 +122,12 @@ while True:
     request = conn.recv(1024)
     request = str(request)
     print('Content = %s' % request)
+    change_color = request.find('/?color')
+    
+    if change_color != -1:
+      conn.send('Content-type: text/html\n')
+      aux = next(rgb)
+      conn.sendall(rgb)
 
     if valor_sensor[0] >= umidade:
         atuador_sole1.value(0)
