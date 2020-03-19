@@ -136,7 +136,6 @@ while True:
   change_color = request.find('/?color')
   lock = request.find('/?lock')
   
- 
 
   if lock != -1:
     if not central_valv:
@@ -174,4 +173,5 @@ while True:
     conn.send('Content-Type: text/html\n')
     conn.send('Connection: close\n\n')
     conn.sendall(response)
+  
   conn.close()
