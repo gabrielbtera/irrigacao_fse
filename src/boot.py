@@ -10,10 +10,10 @@ import gc
 gc.collect()
 
 import network
-ap = metwork.WLAN(network.AP_IF)
+ap = network.WLAN(network.AP_IF)
 
 if not ap.active():
   ap.active(True)
 
 ap.config(essid='brain', password='thisisaprototype')
-print(access_point.ifconfig())
+print(ap.ifconfig())

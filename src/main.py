@@ -70,7 +70,7 @@ def renderizador():
         color = document.getElementById('block01');
         if (response.ok){
           let newColor = await response.text();
-          color.style.background-color = newColor;
+          color.style.background = newColor;
         };
       };
 
@@ -107,7 +107,7 @@ def getrgb():
     yield string
 
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s = socket()
 s.bind(('', 80))
 s.listen(5)
 
