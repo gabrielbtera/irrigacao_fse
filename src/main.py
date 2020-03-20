@@ -139,7 +139,12 @@ while True:
 
   if lock != -1:
     if not central_valv:
-      pass
+      atuador_central.value(0)
+      atuador_sole1.value(0)
+      atuador_sole2.value(0)
+      central_valv = True
+    else:
+      central_valv = False
 
   if not central_valv:
     
