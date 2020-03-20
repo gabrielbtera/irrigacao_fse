@@ -70,13 +70,13 @@ def renderizador():
       <h2>VÁVULA CENTRAL:<strong id="state">OFF</strong></h2>
       <button class="button" onclick="lock()">TRAVA MANUAL</button>
       <h2><strong>QUADRANTES</strong></h2>
-      <h1 id="block01" class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q1</strong></h1>
-      <h1 id="block02" class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q2</strong></h1>
-      <h1 id="block03" class="quadrante" style="background-color: rgb(67, 133, 2);"><strong>Q3</strong></h1>
+      <h1 id="block01" class="quadrante" style="background-color: rgb(0, 0, 0);"><strong>Q1</strong></h1>
+      <h1 id="block02" class="quadrante" style="background-color: rgb(0, 0, 0);"><strong>Q2</strong></h1>
+      <h1 id="block03" class="quadrante" style="background-color: rgb(0, 0, 0);"><strong>Q3</strong></h1>
     <div>
-      <h1 id="block04" class="quadrante01" style="background-color: rgb(67, 133, 2);"><strong>Q3</strong></h1>
-      <h1 id="block05" class="quadrante01" style="background-color: rgb(67, 133, 2);"><strong>Q3</strong></h1>
-      <h1 id="block06" class="quadrante01" style="background-color: rgb(67, 133, 2);"><strong>Q3</strong></h1>
+      <h1 id="block04" class="quadrante01" style="background-color: rgb(0, 0, 0);"><strong>Q3</strong></h1>
+      <h1 id="block05" class="quadrante01" style="background-color: rgb(0, 0, 0);"><strong>Q3</strong></h1>
+      <h1 id="block06" class="quadrante01" style="background-color: rgb(0, 0, 0);"><strong>Q3</strong></h1>
     </div>
     </div>
     <script>
@@ -101,6 +101,10 @@ def renderizador():
           let newColor = await response.json();
           document.getElementById("block01").style.background = newColor["a"];
           document.getElementById("block02").style.background = newColor["b"];
+          document.getElementById("block03").style.background = newColor["c"];
+          document.getElementById("block04").style.background = newColor["d"];
+          document.getElementById("block05").style.background = newColor["e"];
+          document.getElementById("block06").style.background = newColor["f"];
         };
       };
 
@@ -122,7 +126,15 @@ def retorna_valores_sensores():
     adc1 = adc1.read()
     adc2 = machine.ADC(pino_sensor2)
     adc2 = adc2.read()
-    return (percentual(adc1), percentual (adc2))
+    adc3 = machine.ADC(pino_sensor3)
+    adc3 = adc3.read()
+    adc4 = machine.ADC(pino_sensor4)
+    adc4 = adc4.read()
+    adc5 = machine.ADC(pino_sensor5)
+    adc5 = adc5.read()
+    adc6 = machine.ADC(pino_sensor6)
+    adc6 = adc6.read()
+    return (percentual(adc1), percentual(adc2), percentual(adc3), percentual(adc4), percentual(adc5), percentual(adc6))
 
 
 """ def getrgb():
@@ -171,6 +183,10 @@ while True:
       atuador_central.value(0)
       atuador_sole1.value(0)
       atuador_sole2.value(0)
+      atuador_sole3.value(0)
+      atuador_sole4.value(0)
+      atuador_sole5.value(0)
+      atuador_sole6.value(0)
       central_valv = True
     else:
       central_valv = False
@@ -189,7 +205,31 @@ while True:
     else:
         atuador_sole2.value(1)
 
-    if atuador_sole1.value() == 0 and atuador_sole2.value() == 0: # VALVULA CENTRAL
+    if valor_sensor[2] >= umidade:
+        atuador_sole3.value(0)
+
+    else:
+        atuador_sole3.value(1)
+
+    if valor_sensor[3] >= umidade:
+        atuador_sole4.value(0)
+
+    else:
+        atuador_sole4.value(1)
+
+    if valor_sensor[4] >= umidade:
+        atuador_sole5.value(0)
+
+    else:
+        atuador_sole5.value(1)
+    
+    if valor_sensor[5] >= umidade:
+        atuador_sole6.value(0)
+
+    else:
+        atuador_sole6.value(1)
+
+    if atuador_sole1.value() == 0 and atuador_sole2.value() == 0 and atuador_sole3.value() == 0 and atuador_sole4.value() == 0 and atuador_sole5.value() == 0 and atuador_sole6.value() == 0: # VALVULA CENTRAL
         atuador_central.value(0)
 
     else:
@@ -200,7 +240,7 @@ while True:
   if change_color != -1:
     conn.send('Content-type:application/json\r\n\r\n')
     # aux = next(rgb)
-    quadrantes = '{"a":"' + per_rgb(valor_sensor[0]) + '","b":"' + per_rgb(valor_sensor[1]) + '"}' 
+    quadrantes = '{"a":"' + per_rgb(valor_sensor[0]) + '","b":"' + per_rgb(valor_sensor[1]) + '","c":"' + per_rgb(valor_sensor[2]) + '","d":"' + per_rgb(valor_sensor[3]) + '","e":"'+ per_rgb(valor_sensor[4]) + '","f":"' + per_rgb(valor_sensor[5]) + '"}' 
     conn.sendall(quadrantes)
   else:
     response = renderizador()
