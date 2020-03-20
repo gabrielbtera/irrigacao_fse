@@ -1,0 +1,24 @@
+ROTEIRO GENÉRICO (versão 1.2)
+
+1) Apresentação visual
+    explicação da maquete
+    mostrar e associar (com a maquete) a interface web
+2) Visão geral do código
+    void Valter () {
+      mostrar boot;
+      tipo de conexão da placa; //Gabriel
+      html;
+      código principal; 
+    }
+    void Gabriel () {
+      mostrar pinagem da esp32;
+      comunicação entre os pinos;
+      sensor, atuador; //Valter
+    } 
+3) Explicação da relação entre os compenentes de hardware
+    //Gabriel: como os compenentes de hardware se comunicam entre si
+4) Explicação específica das partes do código
+    //comunicação com hardware (rotas)
+    //comunicação com javascript
+5) Aplicação comercial
+    Gabriel();
