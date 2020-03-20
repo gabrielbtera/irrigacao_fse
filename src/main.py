@@ -5,10 +5,25 @@ from machine import Pin
 ################# variaveis globais ########################
 atuador_sole1 = Pin(19, Pin.OUT) 
 atuador_sole2 = Pin(18, Pin.OUT)
+atuador_sole3 = Pin(5, Pin.OUT)
+atuador_sole4 = Pin(4, Pin.OUT)
+atuador_sole5 = Pin(22, Pin.OUT)
+atuador_sole6 = Pin(2, Pin.OUT)
 atuador_central = Pin(21, Pin.OUT)
 umidade = 4050 # input do usuario
+
+# sensores
 pino_sensor1 = Pin(34, Pin.IN) 
 pino_sensor2 = Pin(35, Pin.IN)
+pino_sensor3 = Pin(32, Pin.IN)
+pino_sensor4 = Pin(33, Pin.IN)
+pino_sensor5 = Pin(39, Pin.IN)
+pino_sensor6 = Pin(36, Pin.IN)
+
+
+arq = open("saida.txt", "w")
+
+arq.write(pino_sensor6)
 ############################################################
 
 def renderizador():
